@@ -1,0 +1,48 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Long Polling Example</title>
+</head>
+<body>
+  <h1>Long Polling Example</h1>
+  <p>Server Counter: <span id="counter">0</span></p>
+  <button id="update-btn">Simulate Data Change</button>
+
+  <script>
+    const counterDisplay = document.getElementById('counter');
+    const updateButton = document.getElementById('update-btn');
+
+    // Function to start long polling
+    function longPoll() {
+      fetch('http://localhost:3000/long-poll')
+        .then(response => response.json())
+        .then(data => {
+          // Update the counter display with new data
+          counterDisplay.innerText = data.data;
+
+          // Restart long polling after receiving a response
+          longPoll();
+        })
+        .catch(error => {
+          console.error('Error during long polling:', error);
+
+          // Retry after a delay in case of an error
+          setTimeout(longPoll, 2000);
+        });
+    }
+
+    // Start long polling when the page loads
+    longPoll();
+
+    // Simulate a data change on the server when the button is clicked
+    updateButton.addEventListener('click', () => {
+      fetch('http://localhost:3000/update', { method: 'POST' })
+        .then(() => console.log('Data change triggered'))
+        .catch(error => console.error('Error triggering update:', error));
+    });
+  </script>
+</body>
+</html>
