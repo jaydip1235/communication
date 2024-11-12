@@ -1,0 +1,45 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webhook Tester</title>
+</head>
+<body>
+  <h1>Webhook Client</h1>
+
+  <button id="sendWebhook">Send Webhook Data</button>
+
+  <script>
+    document.getElementById('sendWebhook').addEventListener('click', () => {
+      const webhookData = {
+        event: 'user_signup',
+        user: {
+          id: '12345',
+          name: 'John Doe',
+          email: 'john.doe@example.com'
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      // Send POST request to the webhook endpoint
+      fetch('http://localhost:3000/webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(webhookData)
+      })
+        .then(response => response.text())
+        .then(data => {
+          console.log('Server Response:', data);
+          alert('Webhook data sent successfully!');
+        })
+        .catch(error => {
+          console.error('Error sending webhook:', error);
+        });
+    });
+  </script>
+</body>
+</html>
